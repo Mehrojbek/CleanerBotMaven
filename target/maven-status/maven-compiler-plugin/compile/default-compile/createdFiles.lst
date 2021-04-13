@@ -1,0 +1,4 @@
+bot\Main.class
+bot\CleanerBot.class
+bot\DbService.class
+bot\BotService.class

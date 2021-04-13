@@ -3,9 +3,10 @@ import java.sql.*;
 import java.util.HashSet;
 
 public class DbService {
-    String url = "jdbc:postgresql://ec2-54-74-156-137.eu-west-1.compute.amazonaws.com/d1jhml5tu4m04l";
-    String dbUser = "jlsludtanfvbcc";
-    String dbPassword = "b6cd54c858e3a5b3772c910c9826a860acb5b3ab2fc9b88a25638cc80006694c";
+
+    String url = "jdbc:postgresql://ec2-99-80-200-225.eu-west-1.compute.amazonaws.com/dcoknvuv7j6ebm";
+    String dbUser = "vzexrdlobxmclm";
+    String dbPassword = "a6c4760fcef82711865165f72078d55cbeb3a0ebd82406cc0c952ec3586cd486";
 
 
     public HashSet<Long> returnData() {
@@ -15,7 +16,7 @@ public class DbService {
             Class.forName("org.postgresql.Driver");
             connection = DriverManager.getConnection(url, dbUser, dbPassword);
             Statement statement = connection.createStatement();
-            String query = "select * from users;";
+            String query = "select chat_id from user_of_bot;";
             ResultSet resultSet = statement.executeQuery(query);
             while (resultSet.next()) {
                 long chatId = resultSet.getLong("chat_id");
@@ -30,15 +31,18 @@ public class DbService {
         return set;
     }
 
-    public void newUser(Long chatId){
+    public void newUser(Long chatId, String userName, Long members){
         Connection connection;
         try {
             Class.forName("org.postgresql.Driver");
             connection = DriverManager.getConnection(url, dbUser, dbPassword);
-            Statement statement = connection.createStatement();
-            String query = "insert into users(chat_id) values('"+chatId+"');";
-            statement.execute(query);
-            statement.close();
+            String query = "insert into user_of_bot(chat_id,user_name,number_of_users) values(?,?,?);";
+            PreparedStatement preparedStatement=connection.prepareStatement(query);
+            preparedStatement.setLong(1,chatId);
+            preparedStatement.setString(2,userName);
+            preparedStatement.setLong(3,members);
+            preparedStatement.execute();
+            preparedStatement.close();
             connection.close();
         } catch (SQLException | ClassNotFoundException throwables) {
             throwables.printStackTrace();
